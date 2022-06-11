@@ -7,7 +7,7 @@
 ***plik teams.csv*** - Plik bez którego program poprawnie nie działa. Zawiera on informacje o wszystkich drużynach dostępnych w grze.
 - **Jak wpisać drużyny do teams.csv?** <br>
 *<nazwa-drużyny>,<umiejętności od 1 do 120>*<br>
-Każdą wartość oddzielamy przecinkiem, a każdą drużynę piszemy od spacji. <br><br>
+Każdą wartość oddzielamy przecinkiem, a każdą drużynę piszemy od entera. <br><br>
 ***Przykład:*** <br>
 Norwegia,73 <br>
 Francja,88 <br>
