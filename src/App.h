@@ -20,7 +20,7 @@ private:
     void choiceTeams();
 
     std::vector<Team> teams;
-    void loadTeams();
+    bool loadTeams();
     void showTeams();
 
 public:

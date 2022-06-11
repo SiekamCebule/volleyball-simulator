@@ -12,13 +12,14 @@ using std::string;
 
 App::App()
 {
-    loadTeams();
 }
 
 void App::start()
 {
     while (true)
     {
+        if (!loadTeams())
+            break;
         int choice = 0;
         while (!(choice >= 1 && choice <= 3))
         {
@@ -79,7 +80,7 @@ void App::showTeams()
     }
 }
 
-void App::loadTeams()
+bool App::loadTeams()
 {
     string name;
     string skill;
@@ -88,11 +89,13 @@ void App::loadTeams()
     if (ifs.good() == false)
     {
         cout << "Nie mo¾na otworzy† pliku teams.csv!\n";
-        getch();
+        Sleep(1400);
+        return false;
     }
     while (getline(ifs, name, ','))
     {
         getline(ifs, skill);
         teams.push_back(Team(name, std::stoi(skill)));
     }
+    return true;
 }
