@@ -8,8 +8,11 @@ class Match
 private:
     std::array<Team, 2> teams;
 
-    void simulatePoint();
-    bool isWinner();
+    const Team *simulatePoint();
+    const Team *matchWinner();
+    bool isSetWinner();
+    bool isMatchWinner();
+    void showActualResults();
     int set;
 
 public:

@@ -23,7 +23,7 @@ void App::start()
         while (!(choice >= 1 && choice <= 3))
         {
             cout << "Witaj w symulatorze siatk¢wki! Wybierz jedn¥ z opcji:\n";
-            cout << "1. Symuluj mecz\n2. Dru¾yny\n3. Ustawienia\n";
+            cout << "1. Symuluj mecz\n2. Dru¾yny (niedost©pne)\n3. Ustawienia (niedost©pne)\n";
             choiceString;
             cin >> choice;
             cls;
@@ -60,12 +60,12 @@ void App::choiceTeams()
         showTeams();
         choiceString;
         cin >> n;
-        match.setTeam(teams[n - 1], i-1);
+        match.setTeam(teams[n - 1], i - 1);
         cls;
     }
 
-    cout << "\nWybrane dru¾yny to " << match.getTeam(0).getName() << " i " << match.getTeam(1).getName() << "\n";
-    Sleep(1500);
+    cout << "Wybrane dru¾yny to " << match.getTeam(0).getName() << " i " << match.getTeam(1).getName() << "\n";
+    Sleep(700);
     cls;
 }
 
@@ -84,7 +84,7 @@ void App::loadTeams()
     string name;
     string skill;
     std::ifstream ifs;
-    ifs.open("../teams.csv");
+    ifs.open("teams.csv");
     if (ifs.good() == false)
     {
         cout << "Nie mo¾na otworzy† pliku teams.csv!\n";

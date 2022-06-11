@@ -23,16 +23,51 @@ Match::~Match()
 
 void Match::startMatch()
 {
-    while (!isWinner())
+    set = 1;
+    while (!isMatchWinner())
     {
-        cout << teams[0].getName() << "  (" << teams[0].getPoints() << ")  -  ";
-        cout << "(" << teams[1].getPoints() << ")  " << teams[1].getName() << "\n";
+        for (auto &team : teams)
+        {
+            team.setPoints(0);
+            for (auto &team : teams)
+                team.setSkill(randomInt(team.getSkill() - 1, team.getSkill() + 1));
+        }
 
-        simulatePoint();
-        cout << "\nSet " << set << "\n";
-        getch();
-        Sleep(150);
-        system("cls");
+        while (!isSetWinner())
+        {
+            const Team *winner;
+            cout << teams[0].getName() << "  (" << teams[0].getPoints() << ")  -  ";
+            cout << "(" << teams[1].getPoints() << ")  " << teams[1].getName() << " (Set " << set << ")"
+                 << "\n\n";
+
+            winner = simulatePoint();
+            cout << "[" << winner->getName() << "] Zdobyto punkt!\n\n\n";
+
+            for (auto &team : teams)
+                team.updatePointsData(set);
+            showActualResults();
+
+            getch();
+
+            Sleep(150);
+            system("cls");
+        }
+
+        cout << "Koniec setu nr " << set << ".\n";
+        if (!isMatchWinner())
+        {
+            set++;
+            cout << "Zaczynam set nr " << set << ".\n";
+        }
+        if (isMatchWinner())
+        {
+            system("cls");
+            cout << "Koniec meczu! Wygrywa dru¾yna --> " << matchWinner()->getName() << "\n";
+            showActualResults();
+            cout << "\n\nWci˜nij dowolny przycisk aby przej˜† do menu: ";
+            getch();
+            system("clear");
+        }
     }
 }
 
@@ -42,7 +77,7 @@ void Match::setTeam(const Team &team, const int &n)
 }
 
 // kiedy wygrywa druzyna 2, wywala bˆ¥d
-bool Match::isWinner()
+bool Match::isSetWinner()
 {
     int pointsToWin;
     Team *opposite = &teams[1];
@@ -52,34 +87,69 @@ bool Match::isWinner()
     else
         pointsToWin = 15;
 
-    if ((teams[0].getPoints() == 25) && ((teams[0].getPoints() - 1) > opposite->getPoints()))
+    if ((teams[0].getPoints() >= pointsToWin) && ((teams[0].getPoints() - 1) > opposite->getPoints()))
+    {
+        teams[0].addSet();
         return true;
-    else if ((opposite->getPoints() == 25) && ((opposite->getPoints() - 1) > teams[0].getPoints()))
+    }
+    else if ((opposite->getPoints() >= pointsToWin) && ((opposite->getPoints() - 1) > teams[0].getPoints()))
+    {
+        opposite->addSet();
+        return true;
+    }
+    else
+        return false;
+}
+
+bool Match::isMatchWinner()
+{
+    if (teams[0].getSets() == 3 || teams[1].getSets() == 3)
         return true;
     else
         return false;
 }
 
-void Match::simulatePoint()
+void Match::showActualResults()
+{
+    for (int i = 0; i < 2; i++)
+    {
+        cout << teams[i].getName() << ": |";
+        for (int ii = 0; ii < teams[i].getPointsData().size(); ii++)
+        {
+            cout << teams[i].getPointsData()[ii] << "|";
+        }
+        cout << "  Sety: " << teams[i].getSets() << "|";
+        cout << "\n";
+    }
+}
+
+const Team *Match::simulatePoint()
 {
     int rd = 0;
     int skillSum = 0;
     for (const auto &team : teams)
         skillSum += team.getSkill();
 
+    Team *winner;
+
     rd = randomInt(0, skillSum);
 
     if (rd <= teams[0].getSkill())
     {
-        teams[0].addPoint();
-        cout << "[" << teams[0].getName() << "] Zdobyto punkt!\n";
+        winner = &teams[0];
     }
     else
     {
-        teams[1].addPoint();
-        cout << "[" << teams[1].getName() << "] Zdobyto punkt!\n";
+        winner = &teams[1];
     }
+    winner->addPoint();
+    return winner;
+}
 
-    // cout << teams[0].getName()<<" "<<teams[0].getPoints()<<"\n";
-    // cout << teams[1].getName() << " " << teams[1].getPoints() << "\n";
+const Team *Match::matchWinner()
+{
+    if (teams[0].getSets() > teams[1].getSets())
+        return &teams[0];
+    else
+        return &teams[1];
 }
