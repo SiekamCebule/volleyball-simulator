@@ -66,7 +66,7 @@ void Match::startMatch()
             showActualResults();
             cout << "\n\nWci˜nij dowolny przycisk aby przej˜† do menu: ";
             getch();
-            system("clear");
+            system("cls");
         }
     }
 }
