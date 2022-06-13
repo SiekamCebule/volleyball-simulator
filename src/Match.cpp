@@ -2,11 +2,15 @@
 #include "Random.h"
 #include <conio.h>
 #include <Windows.h>
+#include "date/date.h"
+#include <fstream>
 using std::cout;
+using std::string;
 
 Match::Match()
 {
     set = 1;
+    isShowResults = true;
 }
 
 Match::Match(const Team &tm1 = Team(), const Team &tm2 = Team())
@@ -15,6 +19,7 @@ Match::Match(const Team &tm1 = Team(), const Team &tm2 = Team())
     teams[1] = tm2;
 
     set = 1;
+    isShowResults = true;
 }
 
 Match::~Match()
@@ -33,38 +38,52 @@ void Match::startMatch()
                 team.setSkill(randomInt(team.getSkill() - 1, team.getSkill() + 1));
         }
 
-        while (!isSetWinner())
+        if (isShowResults)
         {
-            const Team *winner;
-            cout << teams[0].getName() << "  (" << teams[0].getPoints() << ")  -  ";
-            cout << "(" << teams[1].getPoints() << ")  " << teams[1].getName() << " (Set " << set << ")"
-                 << "\n\n";
+            while (!isSetWinner())
+            {
+                showTeamsHeader();
 
-            winner = simulatePoint();
-            cout << "[" << winner->getName() << "] Zdobyto punkt!\n\n\n";
+                Team *winner;
+                winner = simulatePoint();
+                showPointWinner(winner);
 
-            for (auto &team : teams)
-                team.updatePointsData(set);
-            showActualResults();
+                for (auto &team : teams)
+                    team.updatePointsData(set);
+                showActualResults();
 
-            getch();
+                getch();
+                Sleep(150);
+                system("cls");
+            }
 
-            Sleep(150);
-            system("cls");
+            cout << "Koniec setu nr " << set << ".\n";
+            if (!isMatchWinner())
+            {
+                set++;
+                cout << "Zaczynam set nr " << set << ".\n";
+            }
+        }
+        else
+        {
+            while (!isSetWinner())
+            {
+                simulatePoint();
+                for (auto &team : teams)
+                    team.updatePointsData(set);
+            }
+            if (!isMatchWinner())
+                set++;
         }
 
-        cout << "Koniec setu nr " << set << ".\n";
-        if (!isMatchWinner())
-        {
-            set++;
-            cout << "Zaczynam set nr " << set << ".\n";
-        }
         if (isMatchWinner())
         {
             system("cls");
             cout << "Koniec meczu! Wygrywa dru¾yna --> " << matchWinner()->getName() << "\n";
             showActualResults();
             cout << "\n\nWci˜nij dowolny przycisk aby przej˜† do menu: ";
+            if (isSaveMatches)
+                saveMatchResultsToFile();
             getch();
             system("cls");
         }
@@ -76,7 +95,6 @@ void Match::setTeam(const Team &team, const int &n)
     teams[n] = team;
 }
 
-// kiedy wygrywa druzyna 2, wywala bˆ¥d
 bool Match::isSetWinner()
 {
     int pointsToWin;
@@ -109,6 +127,18 @@ bool Match::isMatchWinner()
         return false;
 }
 
+void Match::showTeamsHeader()
+{
+    cout << teams[0].getName() << "  (" << teams[0].getPoints() << ")  -  ";
+    cout << "(" << teams[1].getPoints() << ")  " << teams[1].getName() << " (Set " << set << ")"
+         << "\n\n";
+}
+
+void Match::showPointWinner(Team *winner)
+{
+    cout << "[" << winner->getName() << "] Zdobyto punkt!\n\n\n";
+}
+
 void Match::showActualResults()
 {
     for (int i = 0; i < 2; i++)
@@ -123,7 +153,7 @@ void Match::showActualResults()
     }
 }
 
-const Team *Match::simulatePoint()
+Team *Match::simulatePoint()
 {
     int rd = 0;
     int skillSum = 0;
@@ -152,4 +182,45 @@ const Team *Match::matchWinner()
         return &teams[0];
     else
         return &teams[1];
+}
+
+void Match::saveMatchResultsToFile()
+{
+    string filename = "results/";
+
+    string temp = "";
+    for (int i = 0; i < 2; i++)
+    {
+        int len = getTeam(i).getName().length();
+        if (len >= 3)
+            temp += getTeam(i).getName().substr(0, 3);
+        else
+            temp += getTeam(i).getName().substr(0, len);
+        temp += "-";
+    }
+
+    auto now = date::floor<std::chrono::minutes>(std::chrono::system_clock::now());
+    auto dp = date::floor<date::days>(now);
+    auto time = date::make_time(now - dp);
+    int hours = time.hours().count();
+    int minutes = time.minutes().count();
+
+    temp += std::to_string(hours + 3) + "-";
+    temp += std::to_string(minutes);
+
+    filename += temp + ".txt";
+
+    std::ofstream ofs;
+    ofs.open(filename);
+
+    for (const auto &team : teams)
+    {
+        ofs << team.getName() << ": |";
+        for (int ii = 0; ii < team.getPointsData().size(); ii++)
+        {
+            ofs << team.getPointsData()[ii] << "|";
+        }
+        ofs << "  Sety: " << team.getSets() << "|";
+        ofs << "\n";
+    }
 }

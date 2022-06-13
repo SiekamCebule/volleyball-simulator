@@ -22,7 +22,7 @@ public:
     short getSkill() const { return skill; }
     short getPoints() const { return points; }
     short getSets() const { return sets; }
-    const std::vector<int> &getPointsData() { return pointsData; }
+    const std::vector<int> getPointsData() const { return pointsData; }
 
     void addPoint() { points++; }
     void addSet() {sets++;}
