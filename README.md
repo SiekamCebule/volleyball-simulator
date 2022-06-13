@@ -20,8 +20,8 @@ Jeśli umiejętności nie mieszczą się w zakresie, automatycznie jest dobieran
 **plik volleyball.exe** - plik wykonywalny programu.
 
 ## Opcje w menu gry:
-- Symuluj mecz
+- Symuluj mecz (Można przesymulować nie wyświetlając każdego punktu aby oszczędzić czas, wpisując "0" przed rozpoczęciem meczu).
 - Drużyny (Można tam dodawać, edytować i usuwać drużyny z poziomu programu.)
-- Ustawienia (Można tutaj ustawić np. czy drużyny mają się automatycznie sortować, lub czy wyniki mają być automatycznie zapisywane w pliku.)
+- Ustawienia (Można tutaj ustawić np. czy drużyny mają się automatycznie sortować, lub czy wyniki mają być automatycznie zapisywane w pliku).
 
 *W pliku teams.csv od razu są przykładowe drużyny, ale nie znam się bardzo na siatkówce więc zachęcam do wpisania własnych.*
